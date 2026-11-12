@@ -16376,7 +16376,7 @@ pub(crate) mod tests {
             "the scrollable command must end before the permission buttons, got {floating_body:?} and {permission_buttons:?}",
         );
         assert!(
-            permission_buttons.bottom() <= viewport.height,
+            permission_buttons.top() >= px(0.) && permission_buttons.bottom() <= viewport.height,
             "terminal permission buttons should remain inside the viewport, got {permission_buttons:?} in {viewport:?}",
         );
     }
