@@ -9527,7 +9527,6 @@ impl ThreadView {
                     .rounded_md()
                     .overflow_hidden()
             })
-            .child(header)
             .map(|this| {
                 let terminal_content = || {
                     div()
@@ -9561,6 +9560,9 @@ impl ThreadView {
                         }))
                 };
 
+                // In the floating row, the header (which shows the full
+                // command) scrolls together with the output, so neither can
+                // push the permission buttons out of view.
                 if layout == ToolCallLayout::Floating {
                     this.child(
                         div()
@@ -9568,14 +9570,16 @@ impl ThreadView {
                             .debug_selector(|| "floating-terminal-tool-call-body".to_string())
                             .max_h_40()
                             .overflow_y_scroll()
+                            .child(header)
                             .when(is_expanded && terminal_view.is_some(), |this| {
                                 this.child(terminal_content())
                             }),
                     )
                 } else {
-                    this.when(is_expanded && terminal_view.is_some(), |this| {
-                        this.child(terminal_content())
-                    })
+                    this.child(header)
+                        .when(is_expanded && terminal_view.is_some(), |this| {
+                            this.child(terminal_content())
+                        })
                 }
             })
             .when_some(permission_request, |this, request| {
